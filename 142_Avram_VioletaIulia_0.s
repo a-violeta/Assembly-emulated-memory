@@ -12,7 +12,7 @@
 	start: .space 4
 	end: .space 4
 	defrag: .space 1
-							#indice_precedent: .long 0
+	indice_precedent: .long 0			#nefolosit
 .text
 .global main
 
@@ -125,8 +125,8 @@ et_pregatire_loop_ADD:
 	xor %ecx, %ecx
 	jmp et_parcurgere_memorie_ADD
 							#et_pregatire_loop_suplimentara:
-							#mov indice_precedent, %ecx		#la defrag nu vreau sa schimb ordinea fisierelor
-							#jmp et_parcurgere_memorie_ADD		#indice_precedent are end+1 al ultimului fis din memorie
+							#mov indice_precedent, %ecx	#la defrag nu vreau sa schimb ordinea fisierelor
+							#jmp et_parcurgere_memorie_ADD	#indice_precedent are end+1 al ultimului fis din memorie
 et_parcurgere_memorie_ADD:
         cmp $1024, %ecx           			#DIMENSIUNE
         je et_afisare_ADD
