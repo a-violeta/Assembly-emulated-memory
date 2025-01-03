@@ -22,7 +22,7 @@
 	formatError1: .asciz "error procesare fis\n"
 	formatError2: .asciz "error concrete\n"
 	simbol: .ascii "/"				#nefolosit
-	buffer: .space 1024
+	buffer: .space 1024				#nefolosit
 .text
 .global main
 
@@ -30,16 +30,16 @@ redimensionare:
         push %ebp
         mov %esp, %ebp
 
-        mov 8(%ebp), %eax	#dim
+        mov 8(%ebp), %eax				#dim
 
 	cmp $0, %eax
 	jle redim_exit
 
         cmp $16, %eax
-        jle et_dim_minim	#fis ocupa macar 2 blocuri de memorie, daca e multiplu de 8 l am lasat exact catul
+        jle et_dim_minim				#fis ocupa macar 2 blocuri de memorie, daca e multiplu de 8 l am lasat exact catul
 
         xor %edx, %edx
-        mov $8, %ebx		#pt impartire
+        mov $8, %ebx					#pt impartire
 	div %ebx
 
         cmp $0, %edx
@@ -54,37 +54,37 @@ redim_exit:
 	pop %ebp
         ret
 
-indexare:			#foloseste eax, ebx, edx
+indexare:						#foloseste eax, ebx, edx
 	push %ebp
 	mov %esp, %ebp
 
-	mov 8(%ebp), %eax	#indexul intreg
+	mov 8(%ebp), %eax				#indexul intreg
 
 	xor %edx, %edx
-	mov $1024, %ebx		#DIMENSIUNE LINIE
+	mov $1024, %ebx					#DIMENSIUNE LINIE
 	div %ebx
 
-	mov %edx, j		#posibil nenecesar
+	mov %edx, j					#posibil nenecesar
 	mov %eax, i
 indexare_end:
 	pop %ebp
 	ret
 
 ADD:
-				#dim > 1024 rezulta spatiu insuficient
+							#dim > 1024 rezulta spatiu insuficient
     	push %ebp
         mov %esp, %ebp
-                                #mai departe aleg sa cred ca fd si dim sunt valide
-        mov 12(%ebp), %ebx	#dim in ebx
+                             				#mai departe aleg sa cred ca fd si dim sunt valide
+        mov 12(%ebp), %ebx				#dim in ebx
 
 	xor %edx, %edx
-        movb 8(%ebp), %dl	#fd si in edx
+        movb 8(%ebp), %dl				#fd si in edx
 	movb %dl, fd
 
 	cmp $0, %ebx
-	jle et_spatiu_insuficient_ADD	#dim nu e conforma
+	jle et_spatiu_insuficient_ADD			#dim nu e conforma
 
-        movb $0, verificare     #pt v[i]=v[i-1]=0
+        movb $0, verificare     			#pt v[i]=v[i-1]=0
 
 	cmpb $1, defrag
 	je et_fara_redimensionare_ADD
@@ -94,9 +94,9 @@ redimensionare_ADD:
         add $4, %esp
 
 	cmp $0, %eax
-	jle et_spatiu_insuficient_ADD	#dim nu e conforma
+	jle et_spatiu_insuficient_ADD			#dim nu e conforma
 
-        mov %eax, %ebx          #dim (in blocuri) e in ebx si in dim
+        mov %eax, %ebx          			#dim (in blocuri) e in ebx si in dim
         mov %eax, dim
 	jmp et_pregatire_loop_ADD
 et_fara_redimensionare_ADD:
@@ -116,16 +116,16 @@ et_pregatire_loop_ADD_suplimentara:
 	mov sf_fis_precedent, %ecx
 	jmp et_parcurgere_memorie_ADD
 et_parcurgere_memorie_ADD:
-        cmp $1048576, %ecx           #DIMENSIUNE
+        cmp $1048576, %ecx           			#DIMENSIUNE
         je et_afisare_ADD
 
-        movb (%esi, %ecx, 1), %dl	#am v[i]
-					#daca am 0, daca inainte nu am 0 e recalculare. altfel inc eax
-					#recalculeaza eax daca indexarea ne spune ca am depasit linia sau verificare indica poz nenula inaintea sa
+        movb (%esi, %ecx, 1), %dl			#v[i]
+							#daca am 0, daca inainte nu am 0 e recalculare. altfel inc eax
+							#recalculeaza eax daca indexarea ne spune ca am depasit linia sau verificare indica poz nenula inaintea sa
         cmpb $0, %dl
         je et_poz_libera_ADD
 
-        movb $0, verificare              #daca v[i] nenul
+        movb $0, verificare              		#daca v[i] nenul
         jmp et_inc_loop_ADD
 et_inc_loop_ADD:
 	inc %ecx
@@ -146,11 +146,11 @@ et_poz_libera_ADD:
 
 	push %edi
 	mov linia, %edi
-	cmp i, %edi			#verific daca indexul i al lui start corespunde cu indexul i curent al lui ecx, daca nu, recalculare
+	cmp i, %edi					#verific daca indexul i al lui start corespunde cu indexul i curent al lui ecx, daca nu, recalculare
 	pop %edi
 	jne et_recalculare_ADD
 
-        inc %eax               		#else: asta nu e primul spatiu liber in vect
+        inc %eax               				#else: asta nu e primul spatiu liber in vect
         cmp %eax, %ebx
         je et_afisare_ADD
 
@@ -164,7 +164,7 @@ et_recalculare_ADD:
 	push %ecx
 	call indexare
 	pop %ecx
-	mov %eax, linia			#retine indexul i al pozitiei de start
+	mov %eax, linia					#retine indexul i al pozitiei de start
 	pop %eax
 	pop %edx
 	pop %ebx
@@ -179,7 +179,7 @@ et_spatiu_insuficient_ADD:
 	push %ecx
         push %ecx
         movb fd, %cl
-        push %ecx			#fd
+        push %ecx					#fd
         push $formatPrintfADD
         call printf
         add $24, %esp
@@ -187,12 +187,12 @@ et_spatiu_insuficient_ADD:
 et_afisare_ADD:
 
         cmp dim, %eax
-        jl et_spatiu_insuficient_ADD        #n am gasit destule poz cat are dim (ebx)
+        jl et_spatiu_insuficient_ADD        		#n am gasit destule poz cat are dim (ebx)
 
-        mov %ecx, %ebx                  #ult poz nula
+        mov %ecx, %ebx                  		#ult poz nula
 	mov %ecx, end
         sub dim, %ecx
-        inc %ecx			#prima poz nula
+        inc %ecx					#prima poz nula
 	mov %ecx, start
 
 
@@ -201,7 +201,7 @@ et_afisare_ADD:
 	pop %ebx
 
 	push j
-	push i				#pt printf
+	push i						#pt printf
 
 	push %ebx
 	push %ecx
@@ -210,11 +210,11 @@ et_afisare_ADD:
 	pop %ebx
 
 	push j
-	push i				#pt printf
+	push i						#pt printf
 
         xor %eax, %eax
         movb fd, %al
-        push %eax                       #fd
+        push %eax                       		#fd
         push $formatPrintfADD
         call printf
         add $24, %esp
@@ -228,17 +228,17 @@ et_afisare_ADD:
 et_modificare_sf_fis_precedent:
 	mov %ebx, sf_fis_precedent
 	jmp et_adaugarea_ADD
-et_adaugarea_ADD:			#se ajunge aici doar daca am unde adauga, start are poz start, ebx are end, fd e v[i]
-        inc %ebx			#ca sa iau toate valorile fara sa modific cmp desi puteam sa o fac
+et_adaugarea_ADD:					#se ajunge aici doar daca am unde adauga, start are poz start, ebx are end, fd e v[i]
+        inc %ebx					#ca sa iau toate valorile fara sa modific cmp desi puteam sa o fac
 	xor %eax, %eax
 	movb fd, %al
-	mov $memorie, %esi		#posibil inutila
+	mov $memorie, %esi				#posibil inutila
 	mov start, %ecx
 et_loop_adaugare_ADD:
         cmp %ebx, %ecx
         je et_ADD_exit
 
-        movb %al, (%esi, %ecx, 1)        #v[i]
+        movb %al, (%esi, %ecx, 1)        		#v[i]
 	xor %edx, %edx
 	movb (%esi, %ecx, 1), %dl
 
@@ -252,17 +252,17 @@ GET:
     	push %ebp
         mov %esp, %ebp
         movb $0, verificare
-	movb 8(%ebp), %al		#fd
+	movb 8(%ebp), %al				#fd
 	movb %al, fd
         xor %eax, %eax
         xor %ebx, %ebx
         xor %ecx, %ecx
         mov $memorie, %esi
 et_loop_iterare_GET:
-        cmp $1048576, %ecx			#DIMENSIUNEA
+        cmp $1048576, %ecx				#DIMENSIUNEA
         je et_afisare_GET
 
-        movb (%esi, %ecx, 1), %dl	#v[i]
+        movb (%esi, %ecx, 1), %dl			#v[i]
 
         cmpb %dl, fd
         je et_gasit_start_GET
@@ -273,17 +273,17 @@ et_gasit_start_GET:
         cmpb $1, verificare
         je et_gasit_end_GET
 
-        mov %ecx, %eax                  #eax retine poz start
+        mov %ecx, %eax                  		#eax retine poz start
         movb $1, verificare
         jmp et_loop_continuare_GET
 et_gasit_end_GET:
-        mov %ecx, %ebx                  #ebx retine poz end
+        mov %ecx, %ebx                  		#ebx retine poz end
         jmp et_loop_continuare_GET
 et_afisare_GET:
 	cmpb $1, defrag
 	je et_GET_fara_afisare
 
-	push %eax			#pt salvare
+	push %eax					#pt salvare
 
 	push %ebx
 	call indexare
@@ -292,20 +292,20 @@ et_afisare_GET:
 	pop %eax
 
 	push j
-	push i				#end_i si end_j
+	push i						#end_i si end_j
 
 	push %eax
 	call indexare
 	add $4, %esp
 	push j
-	push i				#start_i si start_j
+	push i						#start_i si start_j
 
         push $formatPrintfGET
         call printf
         add $20, %esp
         jmp et_GET_exit
-et_GET_fara_afisare:			#pt defrag
-	mov %eax, start			#indecsi intregi
+et_GET_fara_afisare:					#pt defrag
+	mov %eax, start					#indecsi intregi
 	mov %ebx, end
 	jmp et_GET_exit
 et_GET_exit:
@@ -315,54 +315,54 @@ et_GET_exit:
 DELETE:
        	push %ebp
         mov %esp, %ebp
-        movb 8(%ebp), %bl               #fd
+        movb 8(%ebp), %bl               		#fd
         mov $memorie, %esi
 
         xor %ecx, %ecx
 et_loop_stergere:
-        cmp $1048576, %ecx                   #DIMENSIUNEA
+        cmp $1048576, %ecx                   		#DIMENSIUNEA
         je et_DELETE_exit
-					#xor %dl, %dl
-        movb (%esi, %ecx, 1), %bh	#v[i]
+							#xor %dl, %dl
+        movb (%esi, %ecx, 1), %bh			#v[i]
 
-	push %ecx			#sa nu l pierd
+	push %ecx					#sa nu l pierd
 
-        cmpb %bl, %bh			#sterg valoarea ceruta
+        cmpb %bl, %bh					#sterg valoarea ceruta
         je et_stergere
 
-	cmpb $1, defrag			#evit afisarea la defrag
+	cmpb $1, defrag					#evit afisarea la defrag
 	je et_loop_stergere_continuare
 
-	cmpb $0, %bh			#sar peste pozitiile goale
+	cmpb $0, %bh					#sar peste pozitiile goale
 	je et_loop_stergere_continuare
 
-	jmp et_afisare_DEL		#altfel afisez
+	jmp et_afisare_DEL				#altfel afisez
 et_loop_stergere_continuare:
 	pop %ecx
         inc %ecx
         jmp et_loop_stergere
-et_afisare_DEL:				#un else la cmp uri
-	movb $1, defrag			#variabila impropriu folosita, nu vreau ca get sa afiseze
+et_afisare_DEL:						#un else la cmp uri
+	movb $1, defrag					#variabila impropriu folosita, nu vreau ca get sa afiseze
 
 	movb %bh, fd
 
-	push %ebx			#il salvez
+	push %ebx					#il salvez
 
 	push fd
-	call GET			#am start si end, indecsi intregi
+	call GET					#am start si end, indecsi intregi
 	add $4, %esp
 
 	push end
 	call indexare
 	add $4, %esp
 	push j
-	push i				#i si j pt end
+	push i						#i si j pt end
 
 	push start
 	call indexare
 	add $4, %esp
 	push j
-	push i				#i si j pt start
+	push i						#i si j pt start
 
 	push fd
 	push $formatPrintfADD
@@ -373,7 +373,7 @@ et_afisare_DEL:				#un else la cmp uri
 
 	movb $0, defrag
 
-	pop %ecx			#incrementez manual ca sa sar peste acelasi fisier de dim ori
+	pop %ecx					#incrementez manual ca sa sar peste acelasi fisier de dim ori
 	mov end, %eax
 	sub start, %eax
 	inc %eax
@@ -387,7 +387,7 @@ et_DELETE_exit:
         ret
 
 DEFRAGMENTATION:
-                                        #iterez, pt fiecare fd fac get(fd), aflu dim, delete(fd) si add(fd, dim)
+                                        		#iterez, pt fiecare fd fac get(fd), aflu dim, delete(fd) si add(fd, dim)
         push %ebp
         mov %esp, %ebp
         xor %ecx, %ecx
@@ -398,26 +398,26 @@ DEFRAGMENTATION:
 	movl $0, sf_fis_precedent
         mov $memorie, %esi
 et_iterare_DEF:
-	cmp $1048576, %ecx                   #DIMENSIUNE
+	cmp $1048576, %ecx                   		#DIMENSIUNE
         je et_exit_DEF
 
-        movb (%esi, %ecx, 1), %dl	#v[i]
-        movb %dl, fd                    #nenecesar cred
+        movb (%esi, %ecx, 1), %dl			#v[i]
+        movb %dl, fd                    		#nenecesar cred
 
         cmpb $0, %dl
         je et_inc_DEF
 et_get_DEF:
-        push %ecx                       #salvez indexarea vectorului
+        push %ecx                       		#salvez indexarea vectorului
 
         push %edx
-        call GET                        #apel functie in functie
+        call GET                        		#apel functie in functie
 
         pop %edx
 et_dim_DEF:
-        mov end, %eax                           #am start si end
+        mov end, %eax                           	#am start si end
         sub start, %eax
         inc %eax
-        mov %eax, dim                           #am dim in blocuri
+        mov %eax, dim                           	#am dim in blocuri
 et_delete_DEF:
         push %edx
         call DELETE
@@ -430,11 +430,11 @@ et_add_DEF:
 	pop %edx
         add $4, %esp
 
-		#ma gandesc la un get aici, primul fisier adaugat oricum nu poate sa sara mai sus de sine
-		#dupa fiecare fisier retin o pozitie ca sa stiu de unde am voie sa adaug urmatorul fisier
-		#dupa ce am facut asta si pt ultimul, cum arata variabila si oare de asta da segfault?
+							#ma gandesc la un get aici, primul fisier adaugat oricum nu poate sa sara mai sus de sine
+							#dupa fiecare fisier retin o pozitie ca sa stiu de unde am voie sa adaug urmatorul fisier
+							#dupa ce am facut asta si pt ultimul, cum arata variabila si oare de asta da segfault?
 
-	#sau sa folosesc end cumva, dar add trebuie sa mi dea valoarea end
+							#sau sa folosesc end cumva, dar add trebuie sa mi dea valoarea end
 
         pop %ecx
         mov end, %ecx
@@ -449,7 +449,7 @@ et_exit_DEF:
 #CONCRETE:
 #	push %ebp
 #	mov %esp, %ebp
-					#	mov 8(%ebp), path		#variabila pt filepath
+					#mov 8(%ebp), path		#variabila pt filepath
 #	mov $5, %eax			#syscall open
 #	mov $path, %ebx			#path
 #	xor %ecx, %ecx			#flags read only
@@ -527,14 +527,14 @@ et_citire_date:
 	push $O
 	push $formatScanf
 	call scanf
-	add $8, %esp			#O = nr de operatii de efectuat
+	add $8, %esp					#O = nr de operatii de efectuat
 
-	mov $0, %ecx			#de aici trebuie sa restaurez mereu ecx
+	mov $0, %ecx					#de aici trebuie sa restaurez mereu ecx
 et_loop_executare:
 	cmp O, %ecx
 	je et_exit
 
-	push %ecx			#salvez counter
+	push %ecx					#salvez counter
 
 	push $cod_operatie
 	push $formatScanf
@@ -549,8 +549,8 @@ et_loop_executare:
         je et_del
 	cmpb $4, cod_operatie
         je et_defrag
-#	cmpb $5, cod_operatie
-#	je et_concrete
+							#cmpb $5, cod_operatie
+							#je et_concrete
 et_inc:
 	pop %ecx
 	inc %ecx
@@ -560,14 +560,14 @@ et_add:
 	push $N
 	push $formatScanf
 	call scanf
-	add $8, %esp			#am nr de fis
+	add $8, %esp					#am nr de fis
 
 	xor %ecx, %ecx
 et_loop_efectuare_ADD:
 	cmp N, %ecx
 	je et_inc
 
-	push %ecx			#salvez counter
+	push %ecx					#salvez counter
 
 	push $fd
 	push $formatScanf
@@ -577,7 +577,7 @@ et_loop_efectuare_ADD:
 	push $dim
         push $formatScanf
         call scanf
-        add $8, %esp			#am file descriptor si dim
+        add $8, %esp					#am file descriptor si dim
 
 	push dim
 	push fd
@@ -593,7 +593,7 @@ et_get:
 	push $fd
 	push $formatScanf
 	call scanf
-	add $8, %esp 			#am fis cautat
+	add $8, %esp 					#am fis cautat
 
 	push fd
 	call GET
@@ -605,7 +605,7 @@ et_del:
 	push $fd
 	push $formatScanf
 	call scanf
-	add $8, %esp			#am fis
+	add $8, %esp					#am fis
 
 	push fd
 	call DELETE
