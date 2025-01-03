@@ -82,7 +82,7 @@ ADD:
 	movb %dl, fd
 
 	cmp $0, %ebx
-	jle et_spatiu_insuficient_ADD	#dim neconforma
+	jle et_spatiu_insuficient_ADD	#dim nu e conforma
 
         movb $0, verificare     #pt v[i]=v[i-1]=0
 
@@ -94,7 +94,7 @@ redimensionare_ADD:
         add $4, %esp
 
 	cmp $0, %eax
-	jle et_spatiu_insuficient_ADD	#dim neconforma
+	jle et_spatiu_insuficient_ADD	#dim nu e conforma
 
         mov %eax, %ebx          #dim (in blocuri) e in ebx si in dim
         mov %eax, dim
